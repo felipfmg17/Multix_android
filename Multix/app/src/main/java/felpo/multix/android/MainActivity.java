@@ -4,10 +4,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import felpo.multix.R;
 
 public class MainActivity extends ActionBarActivity {
+    private Common common;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +38,43 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickConsultar(View v){
+
+    }
+
+
+
+    private void consultarMulta(){
+        
+    }
+
+    private void showMultasOnGui(){
+
+    }
+
+    private void showEmptyGui(){
+
+    }
+
+    private void findViews(){
+
+    }
+
+    private void showPlacaSizeMessage(){
+
+    }
+
+    private void showErrorMessage(){
+
+    }
+
+    private void showDefaultPlacaConfirmationMessage(){
+
+    }
+
+    private void launchMultaDescription(){
+
     }
 }

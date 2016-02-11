@@ -3,11 +3,11 @@ package felpo.multix.core;
 import java.io.*;
 
 public class Multa implements Comparable<Multa>, Serializable{
-    private String folio;
-    private String fecha;
-    private String sancion;
-    private String motivo;
-    private String status;
+    public String folio;
+    public String fecha;
+    public String sancion;
+    public String motivo;
+    public String status;
 
     public Multa(String folio, String fecha, String sancion, String motivo, String status) {
         this.folio = folio;

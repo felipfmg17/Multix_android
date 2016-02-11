@@ -10,6 +10,7 @@ public class Multix {
     private static final String DF_WEB_PAGE_URL = "http://www.finanzas.df.gob.mx/sma/detallePlaca.php?placa=";
     private static final String SIN_ADEUDOS = "sin adeudos!";
     private static final String FOLIO = "folio";
+    public  static final String PAGADA = "pagada";
     
     
     public static History requestHistory(String placa) throws IOException{
@@ -25,9 +26,10 @@ public class Multix {
         List<Multa> dif = new ArrayList<Multa>();
         if(!old.placa.equals(neww.placa))
             throw new Exception("Las Placas no son iguales");
-        old.multas.sort(null);
-        neww.multas.sort(null);
-        
+
+        Collections.sort(old.multas);
+        Collections.sort(neww.multas);
+
         int so = old.multas.size();
         int sn = neww.multas.size();
         int d = sn - so;
@@ -42,7 +44,7 @@ public class Multix {
         URL url = new URL(m);
         URLConnection con = url.openConnection();
         con.connect();
-        long size = con.getContentLengthLong();
+        long size = con.getContentLength();
         InputStream in = con.getInputStream();
         String r = new String(Tool.extract(in, size));
         return r;
