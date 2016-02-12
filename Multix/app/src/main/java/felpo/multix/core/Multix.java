@@ -11,6 +11,7 @@ public class Multix {
     private static final String SIN_ADEUDOS = "sin adeudos!";
     private static final String FOLIO = "folio";
     public  static final String PAGADA = "pagada";
+    public static final int MIN_PLACA_SIZE = 5;
     
     
     public static History requestHistory(String placa) throws IOException{
