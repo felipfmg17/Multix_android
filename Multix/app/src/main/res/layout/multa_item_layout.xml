@@ -3,27 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    android:weightSum="3">
+    android:weightSum="24">
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/textView2"
-        android:layout_weight="1"/>
+        android:layout_weight="7"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/textView4"
-        android:layout_weight="1"/>
+        android:layout_weight="7"
+        android:textStyle="bold" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/textView3"
-        android:layout_weight="1"/>
+        android:layout_weight="10"/>
 </LinearLayout>
