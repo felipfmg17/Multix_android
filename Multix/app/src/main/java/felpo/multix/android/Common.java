@@ -10,12 +10,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import felpo.multix.R;
 import felpo.multix.core.History;
 import felpo.tools.Tool;
 
 public class Common {
     private Context context;
-    private final String DEFAULT_PLACA = "placa";
+    private final String DEFAULT_PLACA;
     private final String DEFAULT_PLACA_ERROR = "error_placa";
     private SharedPreferences sharedPreferences;
     private final String HISTORY_FILE_EXTENSION = ".ser";
@@ -23,6 +24,7 @@ public class Common {
     public Common(Context context){
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        DEFAULT_PLACA = context.getString(R.string.default_placa_key);
     }
 
     public boolean defaultPlacaExists(){
@@ -30,7 +32,7 @@ public class Common {
     }
 
     public String getDefaultPlaca(){
-        return sharedPreferences.getString(DEFAULT_PLACA,DEFAULT_PLACA_ERROR);
+        return sharedPreferences.getString(DEFAULT_PLACA,DEFAULT_PLACA_ERROR).toUpperCase();
     }
 
     public boolean oldHistoryExists(){
@@ -63,7 +65,7 @@ public class Common {
 
     public void setDefaultPlaca(String placa){
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(DEFAULT_PLACA,placa);
+        editor.putString(DEFAULT_PLACA,placa.toUpperCase());
         editor.commit();
     }
 }

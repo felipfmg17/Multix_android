@@ -32,7 +32,7 @@ public class WaitService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        init();
     }
 
     @Override
@@ -41,11 +41,12 @@ public class WaitService extends Service {
     }
 
 
-    private void defaultConfiguration(){
+    private void init(){
         waitingThread = new Thread(new RunSearch());
         common = new Common(this);
         handler = new Handler();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        waitingThread.start();
 
     }
 

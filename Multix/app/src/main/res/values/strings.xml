@@ -4,14 +4,19 @@
     <string name="app_name">Multix</string>
     <string name="title_activity_main">Multix</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Ajustes</string>
     <string name="new_notification_title">Tienes una nueva infraccion de transito</string>
     <string name="consultar_button">Consultar Multas</string>
     <string name="placa_hint">Ingresa tu placa</string>
     <string name="no_tienes_multas">No tienes multas</string>
-    <string name="blank"></string>;
-    <string name="placa_size_error">Ingresa una placa correcta</string>
+    <string name="blank"></string>
+;        <string name="placa_size_error">Ingresa una placa correcta</string>
     <string name="process_error">Hubo un error, intentalo otra vez</string>
     <string name="placa_default_confirmation">agregada como placa por defecto</string>
+    <string name="title_activity_my_preferences">MyPreferences</string>
+    <string name="default_placa_key">placa_defecto</string>
+    <string name="default_placa_title">Placa por defecto</string>
+    <string name="title_activity_multa_description">MultaDescriptionActivity</string>
+    <string name="bundle_multa">multa_bundle</string>
 
 </resources>
