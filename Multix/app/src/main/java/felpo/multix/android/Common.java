@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import felpo.multix.R;
 import felpo.multix.core.History;
+import felpo.multix.core.Multix;
 import felpo.tools.Tool;
 
 public class Common {
@@ -28,7 +29,11 @@ public class Common {
     }
 
     public boolean defaultPlacaExists(){
-        return sharedPreferences.contains(DEFAULT_PLACA);
+        if(sharedPreferences.contains(DEFAULT_PLACA)){
+            String placa = getDefaultPlaca();
+            return Multix.validatePlaca(placa);
+        }
+        return false;
     }
 
     public String getDefaultPlaca(){
@@ -47,10 +52,11 @@ public class Common {
     }
 
     public History loadOldHistory() throws IOException, ClassNotFoundException {
-        FileInputStream in = context.openFileInput(getDefaultPlaca() + HISTORY_FILE_EXTENSION);
+        /*FileInputStream in = context.openFileInput(getDefaultPlaca() + HISTORY_FILE_EXTENSION);
         History h = (History) Tool.readObject(in);
         in.close();
-        return h;
+        return h;*/
+        return Multix.testHistory();
     }
 
     public void saveOldHistory(History old) throws IOException {

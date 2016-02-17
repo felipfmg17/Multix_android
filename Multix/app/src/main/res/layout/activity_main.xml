@@ -11,8 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        >
+        android:layout_alignParentTop="true" >
 
         <LinearLayout
             android:orientation="horizontal"
@@ -20,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:weightSum="10"
-            android:paddingBottom="2dp">
+            android:paddingBottom="8dp">
 
             <EditText
                 android:layout_width="0dp"
@@ -42,7 +41,8 @@
 
         <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:paddingBottom="3dp">
 
             <ListView
                 android:layout_width="match_parent"

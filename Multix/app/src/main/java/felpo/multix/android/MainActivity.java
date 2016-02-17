@@ -1,5 +1,6 @@
 package felpo.multix.android;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -30,6 +31,10 @@ public class MainActivity extends ActionBarActivity {
     private String placa;
     private History history;
     private ExecutorService worker;
+    private ProgressDialog dialog;
+
+
+    // Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,12 @@ public class MainActivity extends ActionBarActivity {
         findViews();
         init();
         startWaitService();
-        onLaunchRequestDefaultMultas();
+        worker.submit(new Runnable() {
+            @Override
+            public void run() {
+                searchMultasDefault();
+            }
+        });
     }
 
 
@@ -58,19 +68,23 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            launchSettingsActivity();
+            startSettingsActivity();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void launchSettingsActivity(){
-        startActivity(new Intent(this,MyPreferences.class));
-    }
+    
+    // Configuration
 
-    public void onClickConsultar(View v){
-        consultarMultas();
+    private void findViews(){
+        vPlaca = (EditText) findViewById(R.id.editText);
+        vMultas = (ListView) findViewById(R.id.listView);
+        vConsultar = (Button) findViewById(R.id.button);
+        vNoMultas = (TextView) findViewById(R.id.textView);
+        vPlaca.clearFocus();
+        addItemClickListener();
     }
 
     private void init(){
@@ -78,45 +92,155 @@ public class MainActivity extends ActionBarActivity {
         worker = Executors.newSingleThreadExecutor();
     }
 
-    private void onLaunchRequestDefaultMultas(){
-        if(common.defaultPlacaExists()){
-            placa = common.getDefaultPlaca();
-            showPlaca();
-            worker.submit(new RunRequestDefaultMultas());
-        }
-        else{
-            showEmptyGui();
-        }
+    private void addItemClickListener(){
+        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startMultaDescription(history.multas.get(position));
+            }
+        };
+
+        vMultas.setOnItemClickListener(listener);
     }
 
-    private void requestDefaultMultas(){
-        try {
-            history = Multix.requestHistory(placa);
-            runOnUiThread(new RunShowMultasOnGui());
-            common.saveOldHistory(history);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Starts intents
+
+    private void startSettingsActivity(){
+        startActivity(new Intent(this,MyPreferences.class));
     }
 
     private void startWaitService(){
         startService(new Intent(this,WaitService.class));
     }
 
-    private void consultarMultas(){
-        extractPlaca();
-        if(validatePlacaSize()){
-            worker.submit(new RunRequestMultasConsultar());
-        }else{
-            showEmptyGui();
+    private void startMultaDescription(Multa multa){
+        Intent intent = new Intent(this,MultaDescriptionActivity.class);
+        intent.putExtra(getString(R.string.bundle_multa),multa);
+        startActivity(intent);
+    }
+
+
+    // Triggered Actions
+
+    public void onClickConsultar(View v){
+        worker.submit(new Runnable() {
+            @Override
+            public void run() {
+                searchMultasConsultar();
+            }
+        });
+    }
+
+
+    // Main procedures
+    
+    private void searchMultasDefault(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showEmptyGui();
+            }
+        });
+        try {
+            if(common.defaultPlacaExists()){
+                placa = common.getDefaultPlaca();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showPlaca();
+                    }
+                });
+                history = Multix.requestHistory(placa);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showMultasOnGui();
+                    }
+                });
+                common.saveOldHistory(history);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
-    private void extractPlaca(){
-        placa = vPlaca.getText().toString().toUpperCase();
+    private void searchMultasConsultar(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showEmptyGui();
+            }
+        });
+        if(!common.isNetworkAvailable()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showNoInternetConnection();
+                }
+            });
+            return;
+        }
+        extractPlaca();
+        if(!Multix.validatePlaca(placa)){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showPlacaSizeMessageError();
+                }
+            });
+            return;
+        }
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showProgressDialog();
+                }
+            });
+            history = Multix.requestHistory(placa);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    cancelProgressDialog();
+                }
+            });
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showPlaca();
+                }
+            });
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMultasOnGui();
+                }
+            });
+            if(!common.defaultPlacaExists()){
+                common.setDefaultPlaca(placa);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDefaultPlacaConfirmation();
+                    }
+                });
+            }
+            if(common.getDefaultPlaca().equals(placa) )
+                common.saveOldHistory(history);
+        }catch (IOException e){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showErrorMessage();
+                }
+            });
+            e.printStackTrace();
+        }
     }
+
+
+    // User Interface modifiers
 
     private void showMultasOnGui(){
         if(history==null)
@@ -147,122 +271,40 @@ public class MainActivity extends ActionBarActivity {
             vPlaca.setText(placa);
     }
 
-    private void findViews(){
-        vPlaca = (EditText) findViewById(R.id.editText);
-        vMultas = (ListView) findViewById(R.id.listView);
-        vConsultar = (Button) findViewById(R.id.button);
-        vNoMultas = (TextView) findViewById(R.id.textView);
-        vPlaca.clearFocus();
-        addItemClickListener();
+    private void showProgressDialog(){
+        dialog = new ProgressDialog(this);
+        dialog.setCancelable(false);
+        dialog.setMessage(getString(R.string.downloading_wait_message));
+        dialog.show();
+    }
+
+    private void cancelProgressDialog(){
+        if(dialog!=null)
+            dialog.cancel();
+        dialog = null;
+    }
+
+    private void showNoInternetConnection(){
+        ATool.toastD(this, getString(R.string.no_internet_conection));
     }
 
     private void showPlacaSizeMessageError(){
-        ATool.toast(this,getString(R.string.placa_size_error));
+        ATool.toastD(this, getString(R.string.placa_size_error));
     }
 
     private void showErrorMessage(){
-        ATool.toast(this,getString(R.string.process_error));
+        ATool.toastD(this, getString(R.string.process_error));
     }
 
-    private void showDefaultPlacaConfirmationMessage(){
-        ATool.toast(this,placa+": "+getString(R.string.placa_default_confirmation));
+    private void showDefaultPlacaConfirmation(){
+        ATool.toastD(this, placa + ": " + getString(R.string.placa_default_confirmation));
     }
 
-    private void showInitialGui(){
-        showEmptyGui();
+
+    // Help Methods
+
+    private void extractPlaca(){
+        placa = vPlaca.getText().toString().toUpperCase();
     }
 
-    private void launchMultaDescription(Multa multa){
-        Intent intent = new Intent(this,MultaDescriptionActivity.class);
-        intent.putExtra(getString(R.string.bundle_multa),multa);
-        startActivity(intent);
-    }
-
-    private boolean validatePlacaSize(){
-        if(placa!=null){
-            int size = placa.length();
-            if(size >= Multix.MIN_PLACA_SIZE)
-                return true;
-            showPlacaSizeMessageError();
-        }
-        return false;
-    }
-
-    private void addItemClickListener(){
-        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                launchMultaDescription(history.multas.get(position));
-            }
-        };
-
-        vMultas.setOnItemClickListener(listener);
-    }
-
-    private void requestMultasConsultar(){
-        try {
-            history = Multix.requestHistory(placa);
-            runOnUiThread(new RunShowMultasOnGui());
-            ATool.d(" "+common.defaultPlacaExists());
-            if(!common.defaultPlacaExists()){
-                common.setDefaultPlaca(placa);
-                runOnUiThread(new RunShowDefaultPlacaConfirmationMessage());
-                common.saveOldHistory(history);
-            }
-            else if(common.getDefaultPlaca().equals(placa)){
-                common.saveOldHistory(history);
-            }
-        } catch (IOException e) {
-            runOnUiThread(new RunShowErrorMessage());
-            runOnUiThread(new RunShowEmptyGui());
-            e.printStackTrace();
-        }
-    }
-
-    private class RunRequestMultasConsultar implements Runnable{
-        @Override
-        public void run() {
-            requestMultasConsultar();
-        }
-    }
-
-    private class RunShowMultasOnGui implements Runnable {
-
-        @Override
-        public void run() {
-            showMultasOnGui();
-        }
-    }
-
-    private class RunShowErrorMessage implements Runnable {
-
-        @Override
-        public void run() {
-            showErrorMessage();
-        }
-    }
-
-    private class RunShowDefaultPlacaConfirmationMessage implements  Runnable{
-
-        @Override
-        public void run() {
-            showDefaultPlacaConfirmationMessage();
-        }
-    }
-
-    private class RunShowEmptyGui implements Runnable{
-
-        @Override
-        public void run() {
-            showEmptyGui();
-        }
-    }
-
-    private class RunRequestDefaultMultas implements  Runnable{
-
-        @Override
-        public void run() {
-            requestDefaultMultas();
-        }
-    }
 }

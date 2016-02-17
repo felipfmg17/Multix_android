@@ -59,9 +59,10 @@ public class MultaListAdapter extends BaseAdapter{
         return view;
     }
 
+
     private void fillView(ViewHandler h, int position){
         h.vFecha.setText(multas.get(position).fecha);
-        h.vMotivo.setText(multas.get(position).motivo.substring(0,MOTIVO_TEXT_LENGTH));
+        h.vMotivo.setText(multas.get(position).motivo.substring(0,Math.min(MOTIVO_TEXT_LENGTH,multas.get(position).motivo.length())));
         h.vStatus.setText(multas.get(position).status.toUpperCase());
 
         if(multas.get(position).status.equals(Multix.PAGADA)){

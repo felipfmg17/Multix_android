@@ -3,6 +3,8 @@ package felpo.tools;
 import java.util.*;
 import java.io.*;
 
+import felpo.multix.android.ATool;
+
 
 public class Tool {
 
@@ -34,7 +36,7 @@ public class Tool {
         }
         return sb.toString().getBytes();
     }
-    
+
     public static byte[] hexDecoder(byte[] h) {
         String s = new String(h);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -91,7 +93,7 @@ public class Tool {
     public static void save(Serializable o, File f) throws IOException{
         Tool.save(serialize(o), f);
     }
-    
+
     public static void save(String s, File f) throws IOException{
         save(s.getBytes(),f);
     }
@@ -108,11 +110,11 @@ public class Tool {
         in.close();
         return b;
     }
-    
+
     public static String loadString(File f) throws IOException{
         return new String(loadBytes(f));
     }
-    
+
     public static void flow(InputStream in, OutputStream out, long n) throws IOException {
         byte[] buf = new byte[64 * 1024];
         int b;
@@ -123,12 +125,21 @@ public class Tool {
                 out.flush();
                 n -= b;
             }
-            if (n == 0) 
+            if (n >= 0)
                 break;
         }
         out.flush();
     }
-    
+
+    public static void flow(InputStream in, OutputStream out) throws IOException{
+        byte[] buf = new byte[64 * 1024];
+        int b;
+        while (  (b = in.read(buf) ) >= 0) {
+            out.write(buf,0,b);
+        }
+        out.flush();
+    }
+
     public static byte[] extract(InputStream in, long n) throws IOException{
         ByteArrayOutputStream out = new ByteArrayOutputStream((int)n);
         flow(in, out, n);
@@ -136,36 +147,44 @@ public class Tool {
         out.close();
         return b;
     }
-    
+
+    public static byte[] extract(InputStream in) throws IOException{
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        flow(in, out);
+        byte[] b = out.toByteArray();
+        out.close();
+        return b;
+    }
+
     public static void write(int n, OutputStream out) throws IOException{
         byte[] b = getBytes(n);
         out.write(b);
         out.flush();
     }
-    
+
     public static void write(long n, OutputStream out) throws IOException{
         byte[] b = getBytes(n);
         out.write(b);
         out.flush();
     }
-    
+
     public static void write(byte[] b, OutputStream out) throws IOException {
         int size = b.length;
         write(size, out);
         out.write(b);
         out.flush();
     }
-    
+
     public static void write(String s, OutputStream out) throws IOException{
         byte[] b = s.getBytes();
         write(b, out);
     }
-    
+
     public static void write(Serializable o, OutputStream out) throws IOException{
         byte[] b = serialize(o);
         write(b, out);
     }
-    
+
     public static void write(File f, OutputStream out) throws IOException{
         String name = f.getName();
         long size = f.length();
@@ -175,7 +194,7 @@ public class Tool {
         flow(in, out, size);
         in.close();
     }
-    
+
     public static void write(File[] files, OutputStream out) throws IOException{
         int fs = files.length;
         write(fs, out);
@@ -183,31 +202,31 @@ public class Tool {
             write(f, out);
         }
     }
-    
+
     public static int readInt(InputStream in) throws IOException{
         return intValue(extract(in,4));
     }
-    
+
     public static long readLong(InputStream in) throws IOException{
         return longValue(extract(in,8));
     }
-    
+
     public static byte[] readBytes(InputStream in) throws IOException{
         int size = readInt(in);
         byte[] b = extract(in, size);
         return b;
     }
-    
+
     public static String readString(InputStream in) throws IOException{
         byte[] b = readBytes(in);
         return new String(b);
     }
-    
+
     public static Object readObject(InputStream in) throws IOException, ClassNotFoundException{
         byte[] b = readBytes(in);
         return deSerialize(b);
     }
-    
+
     public static void readFile(File path, InputStream in) throws IOException{
         String name = readString(in);
         long size = readLong(in);
@@ -216,11 +235,11 @@ public class Tool {
         flow(in, out, size);
         out.close();
     }
-    
+
     public static void readFiles(File path, InputStream in) throws IOException{
         int fs = readInt(in);
         for(int i=0;i<fs;i++)
             readFile(path,in);
     }
-    
+
 }

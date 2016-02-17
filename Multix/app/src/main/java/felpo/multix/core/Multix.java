@@ -3,6 +3,8 @@ package felpo.multix.core;
 import java.util.*;
 import java.net.*;
 import java.io.*;
+
+import felpo.multix.android.ATool;
 import felpo.tools.*;
 
 
@@ -12,8 +14,9 @@ public class Multix {
     private static final String FOLIO = "folio";
     public  static final String PAGADA = "pagada";
     public static final int MIN_PLACA_SIZE = 5;
-    
-    
+    public static final int SALARIO_MINIMO = 73;
+
+
     public static History requestHistory(String placa) throws IOException{
         String m = requestHtml(DF_WEB_PAGE_URL+placa);
         m = extractPlainText(m);
@@ -22,76 +25,92 @@ public class Multix {
         History h = new History(placa, multas);
         return h;
     }
-    
-    public static List<Multa> extractDifferences(History old, History neww) throws Exception{
+
+    public static List<Multa> extractDifferences(History old, History history) throws Exception{
         List<Multa> dif = new ArrayList<Multa>();
-        if(!old.placa.equals(neww.placa))
+        if(!old.placa.equals(history.placa))
             throw new Exception("Las Placas no son iguales");
 
         Collections.sort(old.multas);
-        Collections.sort(neww.multas);
+        Collections.sort(history.multas);
 
         int so = old.multas.size();
-        int sn = neww.multas.size();
+        int sn = history.multas.size();
         int d = sn - so;
-        
+
         if(d>0)
-            dif = neww.multas.subList(sn-d, sn);
+            dif = history.multas.subList(sn-d, sn);
         return dif;
     }
-    
-    
-    private static String requestHtml(String m) throws MalformedURLException, IOException {
-        URL url = new URL(m);
-        URLConnection con = url.openConnection();
-        con.connect();
-        long size = con.getContentLength();
-        InputStream in = con.getInputStream();
-        String r = new String(Tool.extract(in, size));
+
+    public static boolean isSancionConvertibleToPesos(String sancion){
+        Scanner sc = new Scanner(sancion);
+        return sc.hasNextInt();
+    }
+
+    public static String calculateSancionInPesos(String sancion){
+        Scanner sc = new Scanner(sancion);
+        int s = sc.nextInt();
+        s *= SALARIO_MINIMO;
+        return "$"+s+".00";
+    }
+
+    public static String requestHistoryInString(String placa) throws IOException {
+        String m = requestHtml(DF_WEB_PAGE_URL+placa);
+        m = extractPlainText(m);
+        return extractMainInfo(m);
+    }
+
+    public static String requestHtml(String url_string) throws MalformedURLException, IOException {
+        URL url = new URL(url_string);
+        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.connect();
+        InputStream in = httpConnection.getInputStream();
+        String r = new String(Tool.extract(in));
         return r;
     }
-    
-    private static String extractPlainText(String m){
-        m = m.replaceAll("<[^>]*>", " ");
-        m = m.toLowerCase();
-        m = m.replace("&aacute;", "a");
-        m = m.replace("&eacute;", "e");
-        m = m.replace("&iacute;", "i");
-        m = m.replace("&oacute;", "o");
-        m = m.replace("&uacute;", "u");
-        m = m.replace("&ntilde;","ñ");
-        return m;
+
+    public static String extractPlainText(String html){
+        html = html.replaceAll("<[^>]*>", " ");
+        html = html.toLowerCase();
+        html = html.replace("&aacute;", "a");
+        html = html.replace("&eacute;", "e");
+        html = html.replace("&iacute;", "i");
+        html = html.replace("&oacute;", "o");
+        html = html.replace("&uacute;", "u");
+        html = html.replace("&ntilde;","ñ");
+        return html;
     }
-    
-    private static String extractMainInfo(String m){
-        int a = m.indexOf("placa:"  );
-        int b = m.indexOf("si usted");
-        m = m.substring(a,b);
-        return m;
+
+    public static String extractMainInfo(String plain_text){
+        int a = plain_text.indexOf("placa:"  );
+        int b = plain_text.indexOf("si usted");
+        plain_text = plain_text.substring(a,b);
+        return plain_text;
     }
-    
-    private static String extractPlaca(String m){
-        Scanner sc = new Scanner(m);
+
+    public static String extractPlaca(String main_info){
+        Scanner sc = new Scanner(main_info);
         sc.next();
         String s = sc.next();
         sc.close();
         return s;
     }
-    
-    private static List<Multa> extractMultas(String m){
+
+    public static List<Multa> extractMultas(String main_info){
         List<Multa> multas = new ArrayList<Multa>();
-        if(m.contains(SIN_ADEUDOS)) 
+        if(main_info.contains(SIN_ADEUDOS))
             return multas;
-        
-        Scanner sc = new Scanner(m);
+
+        Scanner sc = new Scanner(main_info);
         sc.nextLine();
-        
+
         String folio;
         String fecha;
         String sancion;
         String motivo;
         String status;
-        
+
         while(sc.hasNext()){
             String s = sc.next();
             if(s.equals(FOLIO)){
@@ -99,6 +118,11 @@ public class Multix {
                 folio = sc.next();
                 fecha = sc.next();
                 status = sc.next();
+                if(status.equals("no")){
+                    status += " "+sc.next();
+                    sc.next();
+                    sc.next();
+                }
                 sc.next();
                 motivo = sc.nextLine().trim();
                 sc.nextLine();
@@ -110,7 +134,27 @@ public class Multix {
             else
                 break;
         }
-        
+
         return multas;
+    }
+
+    public static boolean validatePlaca(String placa){
+        return placa.length() >= MIN_PLACA_SIZE;
+    }
+
+
+
+    public static History testHistory(){
+        String s ="placa:   374vra      \n" +
+                "\t\t    \n" +
+                "\t\t   \t\t  folio   fecha de infraccion   situacion \n" +
+                "\t\t\t \n" +
+                "\t\t\t  03041960579  2014-04-19   pagada       motivo:    por no respetar los limites de velocidad establecidos en vias primarias, en caso de no haber señalamiento   la velocidad maxima sera de 70 kilometros por hora   \n" +
+                "\t\t\t   fundamento:     articulo:  5,  fraccion:  v,  parrafo:  ,  inciso:  a  \n" +
+                "\n" +
+                "\t\t\t\t\t   sancion:     5  dias de salario minimo  \n" +
+                "\t\t\t\t\t \n" +
+                "\t\t\t   total infracciones: 2  ";
+        return new History(extractPlaca(s),extractMultas(s));
     }
 }

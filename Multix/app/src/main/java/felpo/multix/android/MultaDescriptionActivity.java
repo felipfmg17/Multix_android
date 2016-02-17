@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import felpo.multix.R;
 import felpo.multix.core.Multa;
+import felpo.multix.core.Multix;
 
 public class MultaDescriptionActivity extends Activity {
     private TextView folio;
@@ -64,7 +65,10 @@ public class MultaDescriptionActivity extends Activity {
         Multa multa = (Multa) bundle.get(getString(R.string.bundle_multa));
         folio.setText(multa.folio);
         fecha.setText(multa.fecha);
-        sancion.setText(multa.sancion);
+        if(Multix.isSancionConvertibleToPesos(multa.sancion))
+            sancion.setText(multa.sancion+ ", " +Multix.calculateSancionInPesos(multa.sancion));
+        else
+            sancion.setText(multa.sancion);
         motivo.setText(multa.motivo);
         status.setText(multa.status);
     }

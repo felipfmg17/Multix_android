@@ -2,7 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
         android:key="@string/default_placa_key"
-        android:title="@string/default_placa_title">
+        android:title="@string/default_placa_title"
+        android:summary="@string/utility_placa_default_preference">
+
 
     </EditTextPreference>
 
