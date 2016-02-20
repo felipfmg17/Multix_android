@@ -14,14 +14,18 @@ public class Multix {
     private static final String FOLIO = "folio";
     public  static final String PAGADA = "pagada";
     public static final int MIN_PLACA_SIZE = 5;
+    public static final int MAX_PLACA_SIZE = 10;
     public static final int SALARIO_MINIMO = 73;
+
+
+    public static int count=0;
 
 
     public static History requestHistory(String placa) throws IOException{
         String m = requestHtml(DF_WEB_PAGE_URL+placa);
         m = extractPlainText(m);
         m = extractMainInfo(m);
-        List<Multa> multas = extractMultas(m);
+        List<Multa> multas = extractMultas(m);     //if(count==0){ multas.remove(0); count=1; }
         History h = new History(placa, multas);
         return h;
     }
@@ -64,9 +68,13 @@ public class Multix {
     public static String requestHtml(String url_string) throws MalformedURLException, IOException {
         URL url = new URL(url_string);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.setConnectTimeout((int)Tool.SECOND*4);
+        httpConnection.setReadTimeout((int)Tool.SECOND*3);
         httpConnection.connect();
         InputStream in = httpConnection.getInputStream();
         String r = new String(Tool.extract(in));
+        in.close();
+        httpConnection.disconnect();
         return r;
     }
 
@@ -139,22 +147,7 @@ public class Multix {
     }
 
     public static boolean validatePlaca(String placa){
-        return placa.length() >= MIN_PLACA_SIZE;
+        return placa.length() >= MIN_PLACA_SIZE && placa.length()<= MAX_PLACA_SIZE && placa.matches("\\w*");
     }
 
-
-
-    public static History testHistory(){
-        String s ="placa:   374vra      \n" +
-                "\t\t    \n" +
-                "\t\t   \t\t  folio   fecha de infraccion   situacion \n" +
-                "\t\t\t \n" +
-                "\t\t\t  03041960579  2014-04-19   pagada       motivo:    por no respetar los limites de velocidad establecidos en vias primarias, en caso de no haber señalamiento   la velocidad maxima sera de 70 kilometros por hora   \n" +
-                "\t\t\t   fundamento:     articulo:  5,  fraccion:  v,  parrafo:  ,  inciso:  a  \n" +
-                "\n" +
-                "\t\t\t\t\t   sancion:     5  dias de salario minimo  \n" +
-                "\t\t\t\t\t \n" +
-                "\t\t\t   total infracciones: 2  ";
-        return new History(extractPlaca(s),extractMultas(s));
-    }
 }

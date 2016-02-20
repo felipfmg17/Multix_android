@@ -1,7 +1,12 @@
 package felpo.multix.android;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,18 +44,53 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ATool.d("create");
         setContentView(R.layout.activity_main);
         findViews();
         init();
-        startWaitService();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(common.isDefaultOn())
+            worker.submit(new Runnable() {
+                @Override
+                public void run() {
+                    searchMultasDefault();
+                }
+            });
+        else if(common.temporalHistoryExists())
+            worker.submit(new Runnable() {
+                @Override
+                public void run() {
+                    loadTemporalHistory();
+                }
+            });
+
+        common.turnOffDefault();
+
+        ATool.d("resumme");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         worker.submit(new Runnable() {
             @Override
             public void run() {
-                searchMultasDefault();
+                saveTemporalHistory();
             }
         });
+        ATool.d("pause");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        worker.shutdown();
+        ATool.d("destroy");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,23 +124,19 @@ public class MainActivity extends ActionBarActivity {
         vConsultar = (Button) findViewById(R.id.button);
         vNoMultas = (TextView) findViewById(R.id.textView);
         vPlaca.clearFocus();
-        addItemClickListener();
-    }
-
-    private void init(){
-        common = new Common(this);
-        worker = Executors.newSingleThreadExecutor();
-    }
-
-    private void addItemClickListener(){
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 startMultaDescription(history.multas.get(position));
             }
         };
-
         vMultas.setOnItemClickListener(listener);
+    }
+
+    private void init(){
+        common = new Common(this);
+        worker = Executors.newSingleThreadExecutor();
+        startService(new Intent(this,WaitService.class));
     }
 
 
@@ -108,10 +144,6 @@ public class MainActivity extends ActionBarActivity {
 
     private void startSettingsActivity(){
         startActivity(new Intent(this,MyPreferences.class));
-    }
-
-    private void startWaitService(){
-        startService(new Intent(this,WaitService.class));
     }
 
     private void startMultaDescription(Multa multa){
@@ -131,6 +163,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
 
 
     // Main procedures
@@ -159,6 +192,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 });
                 common.saveOldHistory(history);
+                common.erasePreviousHistories();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -170,6 +204,12 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
                 showEmptyGui();
+            }
+        });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPlaca();
             }
         });
         if(!common.isNetworkAvailable()){
@@ -199,18 +239,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
             history = Multix.requestHistory(placa);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    cancelProgressDialog();
-                }
-            });
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showPlaca();
-                }
-            });
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -226,8 +255,10 @@ public class MainActivity extends ActionBarActivity {
                     }
                 });
             }
-            if(common.getDefaultPlaca().equals(placa) )
+            if(common.getDefaultPlaca().equals(placa) ){
                 common.saveOldHistory(history);
+            }
+
         }catch (IOException e){
             runOnUiThread(new Runnable() {
                 @Override
@@ -236,6 +267,13 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
             e.printStackTrace();
+        }finally {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    cancelProgressDialog();
+                }
+            });
         }
     }
 
@@ -250,7 +288,6 @@ public class MainActivity extends ActionBarActivity {
             vMultas.setAdapter(adapter);
             vNoMultas.setVisibility(View.INVISIBLE);
             vMultas.setVisibility(View.VISIBLE);
-
         }else{
             vMultas.setVisibility((View.INVISIBLE));
             vNoMultas.setText(getString(R.string.no_tienes_multas));
@@ -306,5 +343,40 @@ public class MainActivity extends ActionBarActivity {
     private void extractPlaca(){
         placa = vPlaca.getText().toString().toUpperCase();
     }
+
+    private void loadTemporalHistory(){
+        try {
+            history = common.loadTemporalHistory();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMultasOnGui();
+                }
+            });
+            placa = history.placa;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showPlaca();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void saveTemporalHistory(){
+        if(history!=null){
+            try {
+                common.saveTemporalHistory(history);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }
