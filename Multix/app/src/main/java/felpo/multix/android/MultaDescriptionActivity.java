@@ -63,13 +63,13 @@ public class MultaDescriptionActivity extends Activity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         Multa multa = (Multa) bundle.get(getString(R.string.bundle_multa));
-        folio.setText(multa.folio);
-        fecha.setText(multa.fecha);
+        folio.setText(" "+multa.folio);
+        fecha.setText(" "+multa.fecha);
         if(Multix.isSancionConvertibleToPesos(multa.sancion))
-            sancion.setText(multa.sancion+ ", " +Multix.calculateSancionInPesos(multa.sancion));
+            sancion.setText(" "+multa.sancion+ ", " +Multix.calculateSancionInPesos(multa.sancion));
         else
-            sancion.setText(multa.sancion);
-        motivo.setText(multa.motivo);
-        status.setText(multa.status);
+            sancion.setText(" "+multa.sancion);
+        motivo.setText(" "+multa.motivo);
+        status.setText(" "+multa.status);
     }
 }

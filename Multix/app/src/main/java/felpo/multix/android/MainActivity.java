@@ -44,7 +44,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ATool.d("create");
         setContentView(R.layout.activity_main);
         findViews();
         init();
@@ -69,8 +68,6 @@ public class MainActivity extends ActionBarActivity {
             });
 
         common.turnOffDefault();
-
-        ATool.d("resumme");
     }
 
     @Override
@@ -82,7 +79,6 @@ public class MainActivity extends ActionBarActivity {
                 saveTemporalHistory();
             }
         });
-        ATool.d("pause");
     }
 
     @Override
@@ -110,6 +106,9 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             startSettingsActivity();
             return true;
+        }
+        else if ( id == R.id.info){
+            startActivity(new Intent(this,InfoActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -239,7 +238,6 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
             history = Multix.requestHistory(placa);
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -252,6 +250,12 @@ public class MainActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         showDefaultPlacaConfirmation();
+                    }
+                });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showAviso();
                     }
                 });
             }
@@ -306,6 +310,10 @@ public class MainActivity extends ActionBarActivity {
     private void showPlaca(){
         if(placa!=null)
             vPlaca.setText(placa);
+    }
+
+    private void showAviso(){
+        ATool.toastD(this,getString(R.string.aviso_notificacion));
     }
 
     private void showProgressDialog(){

@@ -36,7 +36,7 @@ public class ATool {
     }
 
     public static void toastD(Context c, String m){
-        Toast.makeText(c,m,Toast.LENGTH_SHORT).show();
+        Toast.makeText(c,m,Toast.LENGTH_LONG).show();
     }
 
     public static boolean isNetworkAvailable(Context context) {

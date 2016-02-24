@@ -10,9 +10,9 @@
     <string name="placa_hint">Ingresa tu placa</string>
     <string name="no_tienes_multas">No tienes multas</string>
     <string name="blank"></string>
-;        <string name="placa_size_error">Ingresa una placa correcta</string>
+    <string name="placa_size_error">Ingresa una placa correcta</string>
     <string name="process_error">Hubo un error, intentalo otra vez</string>
-    <string name="placa_default_confirmation">agregada como placa por defecto</string>
+    <string name="placa_default_confirmation">Agregada como placa por defecto</string>
     <string name="title_activity_my_preferences">MyPreferences</string>
     <string name="default_placa_key">placa_defecto</string>
     <string name="default_placa_title">Placa por defecto</string>
@@ -20,13 +20,15 @@
     <string name="bundle_multa">multa_bundle</string>
     <string name="folio_tag">Folio:</string>
     <string name="fecha_tag">Fecha:</string>
-    <string name="sancion_tag">Sancion:</string>
+    <string name="sancion_tag">Sanción:</string>
     <string name="motivo_tag">Motivo:</string>
     <string name="status_tag">Status:</string>
-    <string name="utility_placa_default_preference">Las multas asociadas a esta placa se mostraran automaticamente al iniciar la aplicacion,
-    ademas recibiras una notifacion en caso de tener una multa nueva </string>
+    <string name="utility_placa_default_preference">Placa para recibir notificaciones  </string>
     <string name="no_internet_conection">Necesitas conexion a internet</string>
     <string name="downloading_wait_message">Descargando</string>
-
-
+    <string name="title_activity_info">InfoActivity</string>
+    <string name="application_info">Aplicación que te notificara cada vez que tu auto sea dectectado por una cámara de tránsito en la Ciudad de México. </string>
+    <string name="info">Info</string>
+    <string name="aviso_notificacion">Te avisaremos en caso de que alguna cámara te detecte.</string>
+    <string name="author">FELPO CORP</string>
 </resources>

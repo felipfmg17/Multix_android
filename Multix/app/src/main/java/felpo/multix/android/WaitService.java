@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,7 +22,7 @@ import felpo.multix.core.Multix;
 import felpo.tools.Tool;
 
 public class WaitService extends Service {
-    private static final long COMMON_DELAY = Tool.HOUR*8;
+    private static final long COMMON_DELAY = 7*Tool.HOUR;
     private static final long NETWORK_DELAY = 5*Tool.MINUTE;
     private static final long START_DELAY = 10*Tool.MINUTE;
     private static final int NOTIFICATION_ID = 17;
@@ -101,7 +102,7 @@ public class WaitService extends Service {
     }
 
     private void showNotification(Notification n){
-        notificationManager.notify(NOTIFICATION_ID, n);
+        notificationManager.notify(new Random().nextInt(), n);
     }
 
     private class RunShowNotification implements Runnable{

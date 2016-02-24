@@ -1,50 +1,67 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="felpo.multix.android.MainActivity" >
+    android:paddingBottom="5dp"
+    tools:context="felpo.multix.android.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/textView15"
+        android:id="@+id/linearLayout">
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:weightSum="10"
-            android:paddingBottom="8dp">
+            android:weightSum="10 ">
 
-            <EditText
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/multix"
+                android:layout_weight="3"/>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText"
-                android:layout_weight="6"
-                android:hint="@string/placa_hint"
-                android:inputType="textCapCharacters"
-                android:textSize="17dp"
-                android:textColor="@color/blue_water"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="7"
+                android:padding="5dp">
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/consultar_button"
-                android:id="@+id/button"
-                android:layout_weight="4"
-                android:onClick="onClickConsultar"
-                android:textSize="14dp"
-                android:textColor="@color/blue_water"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText"
+                    android:layout_weight="6"
+                    android:hint="@string/placa_hint"
+                    android:inputType="textCapCharacters"
+                    android:textSize="17dp"
+                    android:textColor="@color/blue_water"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/consultar_button"
+                    android:id="@+id/button"
+                    android:layout_weight="4"
+                    android:onClick="onClickConsultar"
+                    android:textSize="14dp"
+                    android:textColor="@color/blue_water"/>
+            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:paddingBottom="3dp">
 
             <ListView
@@ -56,10 +73,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
+                android:text="@string/blank"
                 android:id="@+id/textView"
                 android:textSize="18dp"/>
         </FrameLayout>
+
+
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="@string/author"
+        android:id="@+id/textView15"
+        android:gravity="left"
+        android:layout_alignRight="@+id/linearLayout"
+        android:layout_alignEnd="@+id/linearLayout"
+        android:textColor="@color/blue_water"
+        android:textStyle="italic"
+        android:textSize="12dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

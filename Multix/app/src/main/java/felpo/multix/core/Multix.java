@@ -25,7 +25,7 @@ public class Multix {
         String m = requestHtml(DF_WEB_PAGE_URL+placa);
         m = extractPlainText(m);
         m = extractMainInfo(m);
-        List<Multa> multas = extractMultas(m);     //if(count==0){ multas.remove(0); count=1; }
+        List<Multa> multas = extractMultas(m);    // if(count==0){ multas.remove(0); multas.remove(0); count=1; }
         History h = new History(placa, multas);
         return h;
     }
@@ -81,11 +81,11 @@ public class Multix {
     public static String extractPlainText(String html){
         html = html.replaceAll("<[^>]*>", " ");
         html = html.toLowerCase();
-        html = html.replace("&aacute;", "a");
-        html = html.replace("&eacute;", "e");
-        html = html.replace("&iacute;", "i");
-        html = html.replace("&oacute;", "o");
-        html = html.replace("&uacute;", "u");
+        html = html.replace("&aacute;", "á");
+        html = html.replace("&eacute;", "é");
+        html = html.replace("&iacute;", "í");
+        html = html.replace("&oacute;", "ó");
+        html = html.replace("&uacute;", "ú");
         html = html.replace("&ntilde;","ñ");
         return html;
     }

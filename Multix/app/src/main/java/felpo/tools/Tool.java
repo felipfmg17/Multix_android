@@ -1,9 +1,12 @@
 package felpo.tools;
 
+
+
+import java.net.*;
 import java.util.*;
 import java.io.*;
 
-import felpo.multix.android.ATool;
+
 
 
 public class Tool {
@@ -241,5 +244,98 @@ public class Tool {
         for(int i=0;i<fs;i++)
             readFile(path,in);
     }
+
+    public static byte[] requestBytes(String url) throws IOException {
+        URL u = new URL(url);
+        InputStream in = u.openStream();
+        byte[] b = extract(in);
+        in.close();
+        return b;
+    }
+
+    public static String requestString(String url) throws IOException {
+        byte[] b = requestBytes(url);
+        String s = new String(b);
+        return s;
+    }
+
+    public static byte[] bits(byte b){
+        byte[] bits = new byte[8];
+        for(int i=0;i<8;i++)
+            bits[7 - i] = (byte) (( 0 != ( (1<<i)&b) ) ? 1 : 0);
+        return bits;
+    }
+
+    public static byte bits(byte[] bits){
+        byte b = 0;
+        for(int i=0;i<8;i++)
+            if(bits[i]==1)
+                b = (byte) (b & (1<<(7-i)));
+        return b;
+    }
+
+    public static Thread execute(Runnable task){
+        Thread thread = new Thread(task);
+        thread.start();
+        return thread;
+    }
+
+    public static void send(int n, Socket socket) throws IOException {
+        write(n, socket.getOutputStream());
+    }
+
+    public static void send(long n, Socket socket) throws IOException {
+        write(n, socket.getOutputStream());
+    }
+
+    public static void send(byte[] b, Socket socket) throws IOException {
+        write(b, socket.getOutputStream());
+    }
+
+    public static void send(String s, Socket socket) throws IOException {
+        write(s, socket.getOutputStream());
+    }
+
+    public static void send(Serializable o, Socket socket) throws IOException {
+        write(o, socket.getOutputStream());
+    }
+
+    public static void send(File f, Socket socket) throws IOException {
+        write(f, socket.getOutputStream());
+    }
+
+    public static void send(File[] files, Socket socket) throws IOException {
+        write(files, socket.getOutputStream());
+    }
+
+    public static int receiveInt(Socket soc) throws IOException {
+        return readInt(soc.getInputStream());
+    }
+
+    public static long receiveLong(Socket soc) throws IOException {
+        return readLong(soc.getInputStream());
+    }
+
+    public static byte[] receiveBytes(Socket soc) throws IOException {
+        return readBytes(soc.getInputStream());
+    }
+
+    public static String receiveString(Socket soc) throws IOException {
+        return readString(soc.getInputStream());
+    }
+
+    public static Object receiveObject(Socket soc) throws IOException, ClassNotFoundException {
+        return readObject(soc.getInputStream());
+    }
+
+    public static void receiveFile(File path, Socket soc) throws IOException {
+        readFile(path, soc.getInputStream());
+    }
+
+    public static void receiveFiles(File path, Socket soc) throws IOException {
+        readFiles(path, soc.getInputStream());
+    }
+
+
 
 }

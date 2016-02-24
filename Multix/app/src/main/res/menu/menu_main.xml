@@ -2,6 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="felpo.multix.android.MainActivity">
+
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="100" app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_manage"/>
+
+    <item android:id="@+id/info" android:title="@string/info"
+        android:orderInCategory="100" app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_dialog_info"/>
 </menu>
