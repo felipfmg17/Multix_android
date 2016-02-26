@@ -11,6 +11,7 @@ import android.widget.TextView;
 import felpo.multix.R;
 import felpo.multix.core.Multa;
 import felpo.multix.core.Multix;
+import felpo.tools.Tool;
 
 public class MultaDescriptionActivity extends Activity {
     private TextView folio;
@@ -54,8 +55,8 @@ public class MultaDescriptionActivity extends Activity {
     private void findViews(){
         folio = (TextView) findViewById(R.id.textView5);
         fecha = (TextView) findViewById(R.id.textView6);
-        sancion = (TextView) findViewById(R.id.textView7);
-        motivo = (TextView) findViewById(R.id.textView8);
+        sancion = (TextView) findViewById(R.id.textView8);
+        motivo = (TextView) findViewById(R.id.textView7);
         status = (TextView) findViewById(R.id.textView9);
     }
 
@@ -63,13 +64,13 @@ public class MultaDescriptionActivity extends Activity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         Multa multa = (Multa) bundle.get(getString(R.string.bundle_multa));
-        folio.setText(" "+multa.folio);
-        fecha.setText(" "+multa.fecha);
+        folio.setText(multa.folio);
+        fecha.setText(multa.fecha);
         if(Multix.isSancionConvertibleToPesos(multa.sancion))
-            sancion.setText(" "+multa.sancion+ ", " +Multix.calculateSancionInPesos(multa.sancion));
+            sancion.setText(Tool.capitalize(multa.sancion)+ " " +Multix.calculateSancionInPesos(multa.sancion));
         else
-            sancion.setText(" "+multa.sancion);
-        motivo.setText(" "+multa.motivo);
-        status.setText(" "+multa.status);
+            sancion.setText(multa.sancion);
+        motivo.setText(Tool.capitalize(multa.motivo));
+        status.setText(Tool.capitalize(multa.status));
     }
 }

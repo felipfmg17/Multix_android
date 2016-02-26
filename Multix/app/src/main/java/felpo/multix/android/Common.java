@@ -94,7 +94,7 @@ public class Common {
         Notification.Builder nb = new Notification.Builder(context);
         nb.setAutoCancel(true);
         nb.setSmallIcon(R.drawable.multix3);
-        nb.setContentText(m.fecha + ", " + m.motivo);
+        nb.setContentText(m.fecha + ", " + Tool.capitalize(m.motivo));
         nb.setContentTitle(context.getString(R.string.new_notification_title));
         long[] pattern = {500,500,500,500};
         nb.setVibrate(pattern);

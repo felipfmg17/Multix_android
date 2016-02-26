@@ -14,6 +14,7 @@ import java.util.List;
 import felpo.multix.R;
 import felpo.multix.core.Multa;
 import felpo.multix.core.Multix;
+import felpo.tools.Tool;
 
 public class MultaListAdapter extends BaseAdapter{
     private List<Multa> multas;
@@ -62,7 +63,7 @@ public class MultaListAdapter extends BaseAdapter{
 
     private void fillView(ViewHandler h, int position){
         h.vFecha.setText(multas.get(position).fecha);
-        h.vMotivo.setText(multas.get(position).motivo.substring(0,Math.min(MOTIVO_TEXT_LENGTH,multas.get(position).motivo.length())));
+        h.vMotivo.setText(Tool.capitalize(multas.get(position).motivo.substring(0, Math.min(MOTIVO_TEXT_LENGTH, multas.get(position).motivo.length()))));
         h.vStatus.setText(multas.get(position).status.toUpperCase());
 
         if(multas.get(position).status.equals(Multix.PAGADA)){

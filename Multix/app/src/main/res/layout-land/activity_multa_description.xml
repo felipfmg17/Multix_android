@@ -29,7 +29,8 @@
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/textView5"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -50,7 +51,8 @@
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/textView6"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -71,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/textView7"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -92,7 +95,8 @@
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/textView8"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -113,7 +117,8 @@
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/textView9"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"/>
         </LinearLayout>
 
     </LinearLayout>
